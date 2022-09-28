@@ -1,6 +1,7 @@
 import { Model } from 'sequelize';
 import db from '.';
 // import OtherModel from './OtherModel';
+// oláMundo
 
 class Example extends Model {
   // public <campo>!: <tipo>;
