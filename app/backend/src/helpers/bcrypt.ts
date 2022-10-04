@@ -1,6 +1,6 @@
 import * as bcrypt from 'bcryptjs';
 
-export default class BcryptHelper {
+export default class Bcrypt {
   private static salt = 10;
 
   public static encrypt(text: string): string {
