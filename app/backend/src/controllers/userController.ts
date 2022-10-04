@@ -6,6 +6,7 @@ class UserController {
 
   public login:RequestHandler = async (req, res) => {
     const { email, password } = req.body;
+    console.log(email, password);
     const result = await this.service.login(email, password);
     res.status(200).json({ token: result });
   };
