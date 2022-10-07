@@ -32,4 +32,27 @@ describe('Testando a rota login', () => {
       expect(chaiResponse).to.have.property('token');
     })
   });
+
+  describe('Campo de E-mail vazio', () => {
+
+    before(async() => {
+      chaiResponse = await chai
+      .request(app)
+      .post('/login')
+      .send({
+        email: '',
+        password: 'trybe10',
+      });
+    });
+
+    it('retorna status 400', async () => {
+      expect(chaiResponse).to.have.status(400);
+    });
+
+
+    it('retorna uma mensagem', async () => {
+      expect(chaiResponse).to.have.property('message');
+    });
+  });
+
 })
