@@ -1,7 +1,7 @@
 import UserModel from '../models/userModel';
 import tokenTool from '../helpers/token';
 import Bcrypt from '../helpers/bcrypt';
-import ILogin from '../interfaces/ILogin';
+import { ILogin, validateLogin } from '../interfaces/ILogin';
 
 export default class UserService {
   public model: UserModel;
@@ -12,7 +12,8 @@ export default class UserService {
 
   public async login(loginInput: ILogin): Promise<string> {
     const result = await this.model.findOne(loginInput.email);
-    console.log(result);
+    const { error } = validateLogin.validate(loginInput);
+    if (error) return error.message;
     Bcrypt.compare(loginInput.password, result.password);
     const token = tokenTool.createToken({ email: result.email });
     return token;

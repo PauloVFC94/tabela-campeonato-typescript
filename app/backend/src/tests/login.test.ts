@@ -19,8 +19,8 @@ describe('Testando a rota login', () => {
       .request(app)
       .post('/login')
       .send({
-        email: 'trybe@trybe.com',
-        password: 'trybe10'
+        email: 'user@user.com',
+        password: 'secret_user'
       });
     });
 
@@ -29,7 +29,7 @@ describe('Testando a rota login', () => {
     });
     
     it('Retorna um token', async () => {
-      expect(chaiResponse).to.have.property('token');
+      expect(chaiResponse.body).to.have.property('token');
     })
   });
 
@@ -51,7 +51,7 @@ describe('Testando a rota login', () => {
 
 
     it('retorna uma mensagem', async () => {
-      expect(chaiResponse).to.have.property('message');
+      expect(chaiResponse.body).to.have.property('message');
     });
   });
 

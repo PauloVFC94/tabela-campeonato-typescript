@@ -1,5 +1,5 @@
 import User from '../database/models/user';
-import ILogin from '../interfaces/ILogin';
+import { ILogin } from '../interfaces/ILogin';
 
 export default class UserModel {
   public model = User;
