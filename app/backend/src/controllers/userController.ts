@@ -10,6 +10,12 @@ class UserController {
     if (!token) return res.status(status).json({ message });
     return res.status(status).json({ token });
   };
+
+  public role:RequestHandler = async (req, res) => {
+    const { email } = res.locals;
+    const { role } = await this.service.findEmail(email);
+    return res.status(200).json({ role });
+  };
 }
 
 export default UserController;

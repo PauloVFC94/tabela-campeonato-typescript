@@ -3,6 +3,8 @@ import * as Joi from 'joi';
 interface ILogin {
   email: string;
   password: string;
+  username?: string,
+  role?: string,
 }
 
 const REQ_FIELD = '400|All fields must be filled';

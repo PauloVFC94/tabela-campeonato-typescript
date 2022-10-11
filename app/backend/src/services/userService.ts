@@ -31,4 +31,9 @@ export default class UserService {
     const token = tokenTool.createToken({ email: result.email });
     return { status: 200, token };
   }
+
+  public async findEmail(email: string): Promise<ILogin> {
+    const response = await this.model.findOne(email);
+    return response;
+  }
 }
