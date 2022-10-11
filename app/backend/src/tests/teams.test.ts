@@ -30,4 +30,23 @@ describe('Testando a rota teams', () => {
         expect(chaiResponse.body[0]).to.have.property('teamName');
       })
     });
+
+    describe('Testa a rota /teams/:id', () => {
+
+      before(async () => {
+        chaiResponse = await chai
+        .request(app)
+        .get('/teams/1')
+      });
+
+      it('Retorna status 200', async () => {
+        expect(chaiResponse).to.have.status(200);
+      });
+      
+      it('Retorna um objeto', async () => {
+        expect(chaiResponse.body).to.be.an('object');
+        expect(chaiResponse.body).to.have.property('teamName');
+        expect(chaiResponse.body.teamName).to.be.eq('Avaí/Kindermann');
+      })
+    });
 });
