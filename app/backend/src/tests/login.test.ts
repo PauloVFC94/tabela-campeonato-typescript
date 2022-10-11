@@ -55,4 +55,63 @@ describe('Testando a rota login', () => {
     });
   });
 
-})
+  describe('Testa a rota /login/validate', () => {
+
+    before(async () => {
+      const chaiResponse = await chai
+      .request(app)
+      .post('/login')
+      .send({
+        email: 'user@user.com',
+        password: 'secret_user',
+      });
+    });
+
+    it('Retorna status 200', async () => {
+      let result = await chai
+      .request(app)
+      .get('/login/validate')
+      .set('authorization', chaiResponse.body.token)
+      expect(result).to.have.status(200);
+    });
+    it('Retorna a role do usuario', async () => {
+      let result = await chai
+      .request(app)
+      .get('/login/validate')
+      .set('authorization', chaiResponse.body.token)
+      expect(result.body).to.have.property('role');
+    });
+  });
+
+  describe('Testa casos inválidos de acesso a rota /login/validate', () => {
+    before(async () => {
+      chaiResponse = await chai
+      .request(app)
+      .get('/login/validate')
+      .set('authorization', '');
+    });
+
+    it('Retorna status 401', async () => {
+      expect(chaiResponse).to.have.status(401);
+    });
+    it('Retorna uma mensagem de erro', async () => {
+      expect(chaiResponse.body).to.have.property('message');
+    });
+  });
+
+  describe('Testa tokens inválidos de acesso a rota /login/validate',() => {
+    before(async () => {
+      chaiResponse = await chai
+      .request(app)
+      .get('/login/validate')
+      .set('authorization', 'badToken');
+    });
+
+    it('Retorna status 401', async () => {
+      expect(chaiResponse).to.have.status(401);
+    });
+    it('Retorna uma mensagem de erro', async () => {
+      expect(chaiResponse.body).to.have.property('message');
+    });
+  });
+});
