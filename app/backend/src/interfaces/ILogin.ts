@@ -5,9 +5,9 @@ interface ILogin {
   password: string;
 }
 
-const REQ_FIELD = 'JoiError|400|All fields must be filled';
-const MIN_LENGHT = 'JoiError|401|{#label} length must be at least {#limit} characters long';
-const INC_FORMAT = 'JoiError|401|Incorrect email or password';
+const REQ_FIELD = '400|All fields must be filled';
+const MIN_LENGHT = '401|{#label} length must be at least {#limit} characters long';
+const INC_FORMAT = '401|Incorrect email or password';
 
 const validateLogin = Joi.object({
   email: Joi.string().email().required().messages({
