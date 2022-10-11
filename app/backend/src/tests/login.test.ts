@@ -58,7 +58,7 @@ describe('Testando a rota login', () => {
   describe('Testa a rota /login/validate', () => {
 
     before(async () => {
-      const chaiResponse = await chai
+      chaiResponse = await chai
       .request(app)
       .post('/login')
       .send({
