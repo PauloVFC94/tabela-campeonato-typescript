@@ -8,7 +8,13 @@ class MatchService {
     this.model = new MatchModel();
   }
 
-  public async findAll(): Promise<IMatch[]> {
+  public async findAll(inProgress: string): Promise<IMatch[]> {
+    if (inProgress) {
+      const booleanProgress = JSON.parse(inProgress as string);
+      const matches = await this.model.querySearch(booleanProgress);
+      return matches;
+    }
+
     const matches = await this.model.findAll();
     return matches;
   }

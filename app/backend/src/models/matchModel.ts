@@ -13,6 +13,17 @@ class MatchModel {
     });
     return matches;
   }
+
+  public async querySearch(inProgress: boolean): Promise<IMatch[]> {
+    const matches = await this.model.findAll({
+      where: { inProgress },
+      include: [
+        { model: Team, as: 'teamHome', attributes: { exclude: ['id'] } },
+        { model: Team, as: 'teamAway', attributes: { exclude: ['id'] } },
+      ],
+    });
+    return matches;
+  }
 }
 
 export default MatchModel;
