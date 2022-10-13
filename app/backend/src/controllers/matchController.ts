@@ -27,6 +27,14 @@ class MatchController {
     const message = await this.service.updateMatch(id);
     return res.status(200).json({ message });
   };
+
+  public updateScore:RequestHandler = async (req, res) => {
+    const { id } = req.params;
+    const { homeTeamScore, awayTeamScore } = req.body;
+    const score = { id, homeTeamScore, awayTeamScore };
+    const message = await this.service.updateScore(score);
+    return res.status(200).json({ message });
+  };
 }
 
 export default MatchController;

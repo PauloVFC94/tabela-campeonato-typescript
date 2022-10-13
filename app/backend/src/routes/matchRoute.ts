@@ -9,5 +9,6 @@ const matchController = new MatchController();
 router.get('/', matchController.findAll);
 router.post('/', tokenValidator.tokenValidation, matchController.createMatch);
 router.patch('/:id/finish', matchController.updateMatch);
+router.patch('/:id', matchController.updateScore);
 
 export default router;
