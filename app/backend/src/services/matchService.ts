@@ -19,7 +19,10 @@ class MatchService {
     return matches;
   }
 
-  public async createMatch(match: IMatch): Promise<IMatch> {
+  public async createMatch(match: IMatch): Promise<IMatch | null> {
+    if (match.homeTeam === match.awayTeam) {
+      return null;
+    }
     const newMatch = await this.model.createMatch({ ...match, inProgress: true });
     return newMatch;
   }
