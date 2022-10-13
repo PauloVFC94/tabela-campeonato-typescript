@@ -12,6 +12,6 @@ router.route('/')
 router.route('/:id/finish')
   .patch(matchController.updateMatch);
 router.route('/:id')
-  .patch(matchController.updateScore);
+  .patch(matchController.updateGoals);
 
 export default router;
