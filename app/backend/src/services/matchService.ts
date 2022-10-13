@@ -23,6 +23,11 @@ class MatchService {
     const newMatch = await this.model.createMatch({ ...match, inProgress: true });
     return newMatch;
   }
+
+  public async updateMatch(id: string): Promise<string> {
+    const updatedMatch = await this.model.updateMatch(id);
+    return updatedMatch;
+  }
 }
 
 export default MatchService;

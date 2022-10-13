@@ -29,6 +29,11 @@ class MatchModel {
     const newMatch = await this.model.create(match);
     return newMatch;
   }
+
+  public async updateMatch(id: string): Promise<string> {
+    await this.model.update({ inProgress: false }, { where: { id } });
+    return 'Finished';
+  }
 }
 
 export default MatchModel;
