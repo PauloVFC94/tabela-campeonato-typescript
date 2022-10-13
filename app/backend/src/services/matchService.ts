@@ -54,8 +54,8 @@ class MatchService {
     return updatedMatch;
   }
 
-  public async updateScore(score: IResult): Promise<string> {
-    const newScore = await this.model.updateScore(score);
+  public async updateGoals(score: IResult): Promise<string> {
+    const newScore = await this.model.updateGoals(score);
     return newScore;
   }
 }

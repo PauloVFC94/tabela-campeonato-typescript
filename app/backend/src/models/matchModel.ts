@@ -36,9 +36,9 @@ class MatchModel {
     return 'Finished';
   }
 
-  public async updateScore(score: IResult): Promise<string> {
-    const { id, homeTeamScore, awayTeamScore } = score;
-    await this.model.update({ homeTeamScore, awayTeamScore }, { where: { id } });
+  public async updateGoals(goals: IResult): Promise<string> {
+    const { id, homeTeamGoals, awayTeamGoals } = goals;
+    await this.model.update({ homeTeamGoals, awayTeamGoals }, { where: { id } });
     return 'Updated';
   }
 }

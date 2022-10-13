@@ -1,5 +1,5 @@
-export default interface IMatch {
+export default interface IResult {
   id: number | string;
-  homeTeamScore: number;
-  awayTeamScore: number;
+  homeTeamGoals: number;
+  awayTeamGoals: number;
 }
