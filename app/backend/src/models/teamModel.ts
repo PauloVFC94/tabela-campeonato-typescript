@@ -9,7 +9,7 @@ class TeamModel {
     return teams;
   }
 
-  public async findByPk(id: string): Promise<ITeam> {
+  public async findByPk(id: string | number): Promise<ITeam> {
     const selectedTeam = await this.model.findByPk(id);
     return selectedTeam as ITeam;
   }
