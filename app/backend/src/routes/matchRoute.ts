@@ -6,9 +6,12 @@ const router = Router();
 
 const matchController = new MatchController();
 
-router.get('/', matchController.findAll);
-router.post('/', tokenValidator.tokenValidation, matchController.createMatch);
-router.patch('/:id/finish', matchController.updateMatch);
-router.patch('/:id', matchController.updateScore);
+router.route('/')
+  .get(matchController.findAll)
+  .post(tokenValidator.tokenValidation, matchController.createMatch);
+router.route('/:id/finish')
+  .patch(matchController.updateMatch);
+router.route('/:id')
+  .patch(matchController.updateScore);
 
 export default router;
