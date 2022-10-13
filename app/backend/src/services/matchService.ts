@@ -18,6 +18,11 @@ class MatchService {
     const matches = await this.model.findAll();
     return matches;
   }
+
+  public async createMatch(match: IMatch): Promise<IMatch> {
+    const newMatch = await this.model.createMatch({ ...match, inProgress: true });
+    return newMatch;
+  }
 }
 
 export default MatchService;
