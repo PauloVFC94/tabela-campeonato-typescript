@@ -1,64 +1,69 @@
-import TeamsModel from '../models/teamModel';
-import MatchesModel from '../models/matchModel';
-import IMatch from '../interfaces/IMatch';
+import TeamModel from '../models/teamModel';
+import MatchModel from '../models/matchModel';
 import ITeam from '../interfaces/ITeam';
 import ITeamBoard from '../interfaces/ITeamBoard';
+import IEditedMatch from '../interfaces/IEditedMatch';
 
 export default class LeaderboardService {
-  public teamModel: TeamsModel;
-  public matchModel: MatchesModel;
-
-  constructor() {
-    this.teamModel = new TeamsModel();
-    this.matchModel = new MatchesModel();
-  }
+  constructor(private teamModel: TeamModel, private matchModel: MatchModel) { }
 
   public async findAllHome(): Promise<ITeamBoard[]> {
-    const matches = await this.matchModel.queryAll(false);
+    const matches = await this.matchModel.queryAllHome();
     const teams = await this.teamModel.findAll();
-    const homeTeams = teams.filter((team) => matches
-      .some((match) => match.teamHome?.teamName === team.teamName))
-      .map(LeaderboardService.generateTeamBoard);
-    const leaderboard = await LeaderboardService.generateLeaderboard(homeTeams, matches);
-    return leaderboard;
+    const emptyLeaderboard = teams.filter((team) => matches
+      .some((match) => match.currTeamName === team.teamName))
+      .map(LeaderboardService.createTeamBoard);
+
+    const leaderboard = LeaderboardService.createLeaderboard(emptyLeaderboard, matches);
+    const sortedLeaderboard = LeaderboardService.sortLeaderboard(leaderboard);
+    return sortedLeaderboard;
   }
 
   public async findAllAway(): Promise<ITeamBoard[]> {
-    const matches = await this.matchModel.queryAll(false);
+    const matches = await this.matchModel.queryAllAway();
     const teams = await this.teamModel.findAll();
-    const awayTeams = teams.filter((team) => matches
-      .some((match) => match.teamAway?.teamName === team.teamName))
-      .map(LeaderboardService.generateTeamBoard);
+    const emptyLeaderboard = teams.filter((team) => matches
+      .some((match) => match.currTeamName === team.teamName))
+      .map(LeaderboardService.createTeamBoard);
 
-    const leaderboard = await LeaderboardService.generateLeaderboard(awayTeams, matches);
-    return leaderboard;
+    const leaderboard = LeaderboardService.createLeaderboard(emptyLeaderboard, matches);
+    const sortedLeaderboard = LeaderboardService.sortLeaderboard(leaderboard);
+    return sortedLeaderboard;
   }
 
   public async findAll(): Promise<ITeamBoard[]> {
-    const matches = await this.matchModel.queryAll(false);
+    const homeMatches = await this.matchModel.queryAllHome();
+    const awayMatches = await this.matchModel.queryAllAway();
     const teams = await this.teamModel.findAll();
-    const allTeams = teams.map(LeaderboardService.generateTeamBoard);
+    const allTeams = teams.map(LeaderboardService.createTeamBoard);
 
-    const leaderboard = await LeaderboardService.generateLeaderboard(allTeams, matches);
-    return leaderboard;
+    const homeLeaderboard = LeaderboardService.createLeaderboard(allTeams, homeMatches);
+    const allLeaderboard = LeaderboardService.createLeaderboard(homeLeaderboard, awayMatches);
+    const sortedLeaderboard = LeaderboardService.sortLeaderboard(allLeaderboard);
+    return sortedLeaderboard;
   }
 
-  private static generateLeaderboard(teams: ITeamBoard[], matches: IMatch[]): ITeamBoard[] {
+  private static createLeaderboard(teams: ITeamBoard[], matches: IEditedMatch[]): ITeamBoard[] {
     const leaderboard = teams.map((team) => matches.reduce((acc, match) => {
-      if (match.teamHome?.teamName === team.name) {
+      if (match.currTeamName === team.name) {
         return LeaderboardService.calcTeamBoard(acc, match);
       }
       return acc;
     }, { ...team }));
+    return leaderboard;
+  }
+
+  private static sortLeaderboard = (leaderboard: ITeamBoard[]): ITeamBoard[] => {
     leaderboard.sort((a, b) => b.totalPoints - a.totalPoints
     || b.totalVictories - a.totalVictories
     || b.goalsBalance - a.goalsBalance
     || b.goalsFavor - a.goalsFavor
     || b.goalsOwn - a.goalsOwn);
-    return leaderboard;
-  }
 
-  private static generateTeamBoard = (team: ITeam) => ({
+    return leaderboard;
+  };
+
+  private static createTeamBoard = (team: ITeam) => ({
     name: team.teamName,
     totalPoints: 0,
     totalGames: 0,
@@ -71,7 +76,7 @@ export default class LeaderboardService {
     efficiency: '',
   });
 
-  private static calcTeamBoard = (acc: ITeamBoard, match: IMatch) => {
+  private static calcTeamBoard = (acc: ITeamBoard, match: IEditedMatch) => {
     const { goalsFavor, goalsOwn, goalsBalance } = LeaderboardService.calcGoals(acc, match);
     const { totalPoints, totalGames, totalDraws, totalVictories, totalLosses } = LeaderboardService
       .calcTotals(acc, match);
@@ -91,18 +96,18 @@ export default class LeaderboardService {
     };
   };
 
-  private static calcGoals = (acc: ITeamBoard, match: IMatch) => {
-    const goalsFavor = acc.goalsFavor + match.homeTeamGoals;
-    const goalsOwn = acc.goalsOwn + match.awayTeamGoals;
+  private static calcGoals = (acc: ITeamBoard, match: IEditedMatch) => {
+    const goalsFavor = acc.goalsFavor + match.currTeamGoals;
+    const goalsOwn = acc.goalsOwn + match.rivalTeamGoals;
     const goalsBalance = goalsFavor - goalsOwn;
     return { goalsFavor, goalsOwn, goalsBalance };
   };
 
-  private static calcTotals = (acc: ITeamBoard, match: IMatch) => {
+  private static calcTotals = (acc: ITeamBoard, match: IEditedMatch) => {
     const totalGames = Number(acc.totalGames) + 1;
-    const totalDraws = acc.totalDraws + Number(match.homeTeamGoals === match.awayTeamGoals);
-    const totalVictories = acc.totalVictories + Number(match.homeTeamGoals > match.awayTeamGoals);
-    const totalLosses = acc.totalLosses + Number(match.homeTeamGoals < match.awayTeamGoals);
+    const totalDraws = acc.totalDraws + Number(match.currTeamGoals === match.rivalTeamGoals);
+    const totalVictories = acc.totalVictories + Number(match.currTeamGoals > match.rivalTeamGoals);
+    const totalLosses = acc.totalLosses + Number(match.currTeamGoals < match.rivalTeamGoals);
     const totalPoints = totalVictories * 3 + totalDraws;
     return { totalPoints, totalGames, totalDraws, totalVictories, totalLosses };
   };
