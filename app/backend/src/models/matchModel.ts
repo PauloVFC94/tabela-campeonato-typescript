@@ -1,46 +1,44 @@
 import Team from '../database/models/team';
 import matchModel from '../database/models/match';
 import IMatch from '../interfaces/IMatch';
-import IResult from '../interfaces/IResult';
+import IGoals from '../interfaces/IResult';
 
-class MatchModel {
+export default class MatchesModel {
   public model = matchModel;
   public async findAll(): Promise<IMatch[]> {
-    const matches = await this.model.findAll({
+    const result = await this.model.findAll({
       include: [
         { model: Team, as: 'teamHome', attributes: { exclude: ['id'] } },
         { model: Team, as: 'teamAway', attributes: { exclude: ['id'] } },
       ],
     });
-    return matches;
+    return result;
   }
 
-  public async querySearch(inProgress: boolean): Promise<IMatch[]> {
-    const matches = await this.model.findAll({
+  public async queryAll(inProgress: boolean): Promise<IMatch[]> {
+    const result = await this.model.findAll({
       where: { inProgress },
       include: [
         { model: Team, as: 'teamHome', attributes: { exclude: ['id'] } },
         { model: Team, as: 'teamAway', attributes: { exclude: ['id'] } },
       ],
     });
-    return matches;
+    return result;
   }
 
-  public async createMatch(match: IMatch): Promise<IMatch> {
-    const newMatch = await this.model.create(match);
-    return newMatch;
+  public async create(match: IMatch): Promise<IMatch> {
+    const result = await this.model.create(match);
+    return result;
   }
 
-  public async updateMatch(id: string): Promise<string> {
+  public async finishMatch(id: string): Promise<string> {
     await this.model.update({ inProgress: false }, { where: { id } });
     return 'Finished';
   }
 
-  public async updateGoals(goals: IResult): Promise<string> {
+  public async updateGoals(goals: IGoals): Promise<string> {
     const { id, homeTeamGoals, awayTeamGoals } = goals;
     await this.model.update({ homeTeamGoals, awayTeamGoals }, { where: { id } });
     return 'Updated';
   }
 }
-
-export default MatchModel;

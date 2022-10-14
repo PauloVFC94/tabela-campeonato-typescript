@@ -8,9 +8,9 @@ const matchController = new MatchController();
 
 router.route('/')
   .get(matchController.findAll)
-  .post(tokenValidator.tokenValidation, matchController.createMatch);
+  .post(tokenValidator.tokenValidation, matchController.create);
 router.route('/:id/finish')
-  .patch(matchController.updateMatch);
+  .patch(matchController.finishMatch);
 router.route('/:id')
   .patch(matchController.updateGoals);
 

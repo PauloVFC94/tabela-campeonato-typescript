@@ -1,63 +1,57 @@
-import MatchModel from '../models/matchModel';
-import TeamModel from '../models/teamModel';
+import MatchesModel from '../models/matchModel';
+import TeamsModel from '../models/teamModel';
 import IMatch from '../interfaces/IMatch';
-import IResult from '../interfaces/IResult';
+import IGoals from '../interfaces/IResult';
 
-interface MatchResult {
+interface MatchResponse {
   status: number;
   message?: string;
   result?: IMatch;
 }
-
-class MatchService {
-  public model: MatchModel;
-  public teamModel: TeamModel;
-
+export default class MatchesService {
+  public model: MatchesModel;
+  public teamsModel: TeamsModel;
   constructor() {
-    this.model = new MatchModel();
-    this.teamModel = new TeamModel();
+    this.model = new MatchesModel();
+    this.teamsModel = new TeamsModel();
   }
 
   public async findAll(inProgress: string): Promise<IMatch[]> {
     if (inProgress) {
-      const booleanProgress = JSON.parse(inProgress as string);
-      const matches = await this.model.querySearch(booleanProgress);
-      return matches;
+      const inProgressBool = JSON.parse(inProgress as string);
+      const result = await this.model.queryAll(inProgressBool);
+      return result;
     }
-
-    const matches = await this.model.findAll();
-    return matches;
+    const result = await this.model.findAll();
+    return result;
   }
 
-  public async createMatch(match: IMatch): Promise<MatchResult> {
+  public async create(match: IMatch): Promise<MatchResponse> {
     if (match.homeTeam === match.awayTeam) {
       return {
         status: 401,
         message: 'It is not possible to create a match with two equal teams',
       };
     }
-    const checkTeam1 = await this.teamModel.findByPk(match.homeTeam);
-    const checkTeam2 = await this.teamModel.findByPk(match.awayTeam);
-
-    if (!checkTeam1 || !checkTeam2) {
+    const checkHomeTeam = await this.teamsModel.findByPk(match.homeTeam);
+    const checkAwayTeam = await this.teamsModel.findByPk(match.awayTeam);
+    if (!checkHomeTeam || !checkAwayTeam) {
       return {
         status: 404,
         message: 'There is no team with such id!',
       };
     }
-    const newMatch = await this.model.createMatch({ ...match, inProgress: true });
-    return { status: 201, result: newMatch };
+    const result = await this.model.create({ ...match, inProgress: true });
+    return { status: 201, result };
   }
 
-  public async updateMatch(id: string): Promise<string> {
-    const updatedMatch = await this.model.updateMatch(id);
-    return updatedMatch;
+  public async finishMatch(id: string): Promise<string> {
+    const result = await this.model.finishMatch(id);
+    return result;
   }
 
-  public async updateGoals(score: IResult): Promise<string> {
-    const newScore = await this.model.updateGoals(score);
-    return newScore;
+  public async updateGoals(goals: IGoals): Promise<string> {
+    const result = await this.model.updateGoals(goals);
+    return result;
   }
 }
-
-export default MatchService;

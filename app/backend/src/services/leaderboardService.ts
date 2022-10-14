@@ -26,7 +26,7 @@ export default class LeaderboardService {
   }
 
   public async findAll(): Promise<TeamBoard[]> {
-    const matches = await this.matchModel.querySearch(false);
+    const matches = await this.matchModel.queryAll(false);
     const teams = await this.teamModel.findAll();
     const homeTeams = teams.filter((team) => matches
       .some((match) => match.teamHome?.teamName === team.teamName))
