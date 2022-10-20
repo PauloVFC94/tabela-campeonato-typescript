@@ -7,26 +7,27 @@ import IEditedMatch from '../interfaces/IEditedMatch';
 export default class LeaderboardService {
   constructor(private teamModel: TeamModel, private matchModel: MatchModel) { }
 
-  public async findAllHome(): Promise<ITeamBoard[]> {
-    const matches = await this.matchModel.queryAllHome();
+  
+  public async findAllAway(): Promise<ITeamBoard[]> {
+    const matches = await this.matchModel.queryAllAway();
     const teams = await this.teamModel.findAll();
-    const emptyLeaderboard = teams.filter((team) => matches
+    const emptyBoard = teams.filter((team) => matches
       .some((match) => match.currTeamName === team.teamName))
       .map(LeaderboardService.createTeamBoard);
 
-    const leaderboard = LeaderboardService.createLeaderboard(emptyLeaderboard, matches);
+    const leaderboard = LeaderboardService.createLeaderboard(emptyBoard, matches);
     const sortedLeaderboard = LeaderboardService.sortLeaderboard(leaderboard);
     return sortedLeaderboard;
   }
 
-  public async findAllAway(): Promise<ITeamBoard[]> {
-    const matches = await this.matchModel.queryAllAway();
+  public async findAllHome(): Promise<ITeamBoard[]> {
+    const matches = await this.matchModel.queryAllHome();
     const teams = await this.teamModel.findAll();
-    const emptyLeaderboard = teams.filter((team) => matches
+    const emptyBoard = teams.filter((team) => matches
       .some((match) => match.currTeamName === team.teamName))
       .map(LeaderboardService.createTeamBoard);
 
-    const leaderboard = LeaderboardService.createLeaderboard(emptyLeaderboard, matches);
+    const leaderboard = LeaderboardService.createLeaderboard(emptyBoard, matches);
     const sortedLeaderboard = LeaderboardService.sortLeaderboard(leaderboard);
     return sortedLeaderboard;
   }
