@@ -63,8 +63,8 @@ export default class MatchesModel {
     rivalTeamGoals: match.homeTeamGoals,
   });
 
-  public async create(match: IMatch): Promise<IMatch> {
-    const result = await this.model.create(match);
+  public async createMatch(match: IMatch): Promise<IMatch> {
+    const result = await this.model.createMatch(match);
     return result;
   }
 

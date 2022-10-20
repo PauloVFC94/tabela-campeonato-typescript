@@ -26,7 +26,7 @@ export default class MatchesService {
     return result;
   }
 
-  public async create(match: IMatch): Promise<MatchResponse> {
+  public async createMatch(match: IMatch): Promise<MatchResponse> {
     if (match.homeTeam === match.awayTeam) {
       return {
         status: 401,
